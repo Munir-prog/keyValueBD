@@ -6,20 +6,25 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class StorageService {
 
+    private String path;
+
     @SneakyThrows
     public void save(Map<String, CacheVal> map, String name) {
-        try (FileOutputStream fos = new FileOutputStream(name + "map");
+        initPath();
+        try (FileOutputStream fos = new FileOutputStream(path + name + "map");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(map);
         }
     }
 
     public Map<String, CacheVal> read(String name) {
-        try (FileInputStream fos = new FileInputStream(name + "map");
+        initPath();
+        try (FileInputStream fos = new FileInputStream(path + name + "map");
              ObjectInputStream ois = new ObjectInputStream(fos)) {
             return (Map<String, CacheVal>) ois.readObject();
         } catch (FileNotFoundException e) {
@@ -27,6 +32,14 @@ public class StorageService {
             return null;
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    private void initPath() {
+        if (path == null) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            path = Objects.requireNonNull(classLoader.getResource(".")).getFile();
         }
     }
 }

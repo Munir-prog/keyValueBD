@@ -23,8 +23,10 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-    implementation 'com.google.protobuf:protobuf-java:3.24.4'
+//    implementation 'com.google.protobuf:protobuf-java:3.24.4'
     implementation 'redis.clients:jedis:5.0.0'
+// https://mvnrepository.com/artifact/io.kaitai/kaitai-struct-runtime
+    implementation group: 'io.kaitai', name: 'kaitai-struct-runtime', version: '0.10'
 
 
     implementation 'org.springframework.boot:spring-boot-starter-web'

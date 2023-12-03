@@ -1,10 +1,12 @@
 package com.mprog.serbuf.service;
 
 import com.mprog.serbuf.model.CacheVal;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Service
 public class StorageCreatorService {
 
     private final CopyOnWriteArrayList<String> createdStorages = new CopyOnWriteArrayList<>();

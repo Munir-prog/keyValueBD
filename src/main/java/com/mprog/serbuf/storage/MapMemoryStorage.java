@@ -3,6 +3,7 @@ package com.mprog.serbuf.storage;
 import com.mprog.serbuf.model.CacheVal;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "sebuf", name = "memory")
 public class MapMemoryStorage implements Storage{
 
     private List<Character> letters;
@@ -31,6 +33,7 @@ public class MapMemoryStorage implements Storage{
 
     @Override
     public void save(ConcurrentHashMap<String, CacheVal> map, String key) {
+        System.out.println("Test");
     }
 
 

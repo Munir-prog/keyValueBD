@@ -5,6 +5,7 @@ import com.mprog.serbuf.service.StorageCreatorService;
 import com.mprog.serbuf.service.impl.StorageService;
 import com.mprog.serbuf.utils.StorageUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
-@Primary
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "sebuf", name = "disk")
 public class MapDiskStorage implements Storage{
 
     private final StorageService storageService;
@@ -32,7 +33,6 @@ public class MapDiskStorage implements Storage{
         }
     }
 
-    @Async
     @Override
     public void save(ConcurrentHashMap<String, CacheVal> map, String key) {
         String storagePrefix = StorageUtils.getStoragePrefix(key);
