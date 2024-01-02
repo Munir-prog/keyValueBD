@@ -1,0 +1,30 @@
+{
+  "shards": [
+    {
+      "index": 0,
+      "replicas": [
+        {
+          "host": "localhost",
+          "port": "8080"
+        },
+        {
+          "host": "localhost",
+          "port": "8081"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "replicas": [
+        {
+          "host": "localhost",
+          "port": "8082"
+        },
+        {
+          "host": "localhost",
+          "port": "8083"
+        }
+      ]
+    }
+  ]
+}

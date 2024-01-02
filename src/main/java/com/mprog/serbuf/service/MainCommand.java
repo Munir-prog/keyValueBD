@@ -1,19 +1,28 @@
 package com.mprog.serbuf.service;
 
+import com.mprog.serbuf.model.ResponseDto;
+
+import java.util.List;
+import java.util.Map;
+
 public interface MainCommand {
 
-    boolean clear(String key);
+    List<ResponseDto> createCollection(String collection, boolean internal);
 
-    String get(String key);
+    boolean clear(String collection, String key);
 
-    String getAndDelete(String key);
+    String get(String collection, String key, boolean internal);
 
-    void set(String key, String value);
+    String getAndDelete(String collection, String key);
 
-    String append(String key, String value);
+    List<ResponseDto> set(String collection, String key, String value, boolean internal);
+    void update(String collection, String key, String value);
+    void pull(String collection, Map<String, String> data);
 
-    void set(String key, String value, Integer expireInSeconds);
+    String append(String collection, String key, String value);
 
-    boolean exists(String key);
+    void set(String collection, String key, String value, Integer expireInSeconds);
+
+    boolean exists(String collection, String key);
 
 }

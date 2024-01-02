@@ -1,15 +1,20 @@
 package com.mprog.serbuf.storage;
 
 import com.mprog.serbuf.model.CacheVal;
+import com.mprog.serbuf.model.DatabaseInfo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "sebuf", name = "memory")
@@ -17,6 +22,7 @@ public class MapMemoryStorage implements Storage{
 
     private List<Character> letters;
     private List<Integer> digits;
+    private Map<String, Map<String, String>> db = new HashMap<>();
 
     @Override
     public ConcurrentHashMap<String, CacheVal> getStorageByKey(String key) {
@@ -32,8 +38,67 @@ public class MapMemoryStorage implements Storage{
     }
 
     @Override
+    public void setValToStorage(String collectionName, String key, String value) {
+        if (db.containsKey(collectionName)) {
+            Map<String, String> collection = db.get(collectionName);
+            collection.put(key, value);
+        } else {
+            log.warn("No such collection");
+            throw new RuntimeException("No such collection");
+        }
+    }
+
+    @Override
+    public ConcurrentHashMap<String, CacheVal> setValToStorageAndReturn(String collection, String key, String value) {
+        return null;
+    }
+
+    @Override
+    public void deleteValFromStorage(String collection, String key) {
+
+    }
+
+    @Override
+    public void updateValInStorage(String collection, String key, String value) {
+
+    }
+
+    @Override
+    public List<DatabaseInfo> getDBInfo(String db) {
+        return null;
+    }
+
+    @Override
+    public String getValFromStorage(String collectionName, String key) {
+        if (db.containsKey(collectionName)) {
+            log.info("collection exists");
+            Map<String, String> collection = db.get(collectionName);
+            String value = collection.get(key);
+            log.info("Value {} found by key {}", value, key);
+            return value;
+        } else {
+            log.warn("No such collection");
+            throw new RuntimeException("No such collection");
+        }
+    }
+
+    @Override
     public void save(ConcurrentHashMap<String, CacheVal> map, String key) {
         System.out.println("Test");
+    }
+
+    @Override
+    public Map<String, Map<String, String>> getAllData() {
+        return db;
+    }
+
+    @Override
+    public void createCollection(String collectionName) {
+        if (db.containsKey(collectionName)) {
+            throw new RuntimeException(collectionName + " collection already exists!");
+        } else {
+            db.put(collectionName, new HashMap<>());
+        }
     }
 
 
