@@ -88,6 +88,46 @@ public class MainCommandService implements MainCommand {
                 .build();
     }
 
+    public ResponseAllData getAllDataCount() {
+        List<MadShard> shards = coordinateService.getShards();
+        int count = 0;
+        List<ShardAllData> shardAllDataList = new ArrayList<>();
+        for (MadShard shard : shards) {
+            List<MadReplica> replicas = shard.getReplicas();
+            List<ReplicaAllData> replicaAllDataList = new ArrayList<>();
+            for (MadReplica replica : replicas) {
+                String urlTemplate = UriComponentsBuilder.fromHttpUrl(replica.buildGetAllUrl())
+                        .encode()
+                        .toUriString();
+                Map<String, Integer> collectionsSize = new HashMap<>();
+                AllDataResponse allDataResponse = sendGetAllDataRequest(urlTemplate);
+                if (allDataResponse.getResult()) {
+                    Map<String, Map<String, String>> collectionData = allDataResponse.getAllData();
+                    for (Map.Entry<String, Map<String, String>> stringMapEntry : collectionData.entrySet()) {
+                        int size = stringMapEntry.getValue().size();
+                        count += size;
+                        collectionsSize.put(stringMapEntry.getKey(), size);
+                    }
+                    ReplicaAllData replicaAllData = ReplicaAllData.builder()
+                            .collectionsSize(collectionsSize)
+                            .host(replica.getHost())
+                            .port(replica.getPort())
+                            .build();
+                    replicaAllDataList.add(replicaAllData);
+                }
+            }
+            ShardAllData shardAllData = ShardAllData.builder()
+                    .replicaAllDataList(replicaAllDataList)
+                    .build();
+            shardAllDataList.add(shardAllData);
+
+        }
+        return ResponseAllData.builder()
+                .count((long) count)
+                .shardAllData(shardAllDataList)
+                .build();
+    }
+
     public Map<String, Map<String, String>> getAllDataInternal() {
         return storage.getAllData();
     }

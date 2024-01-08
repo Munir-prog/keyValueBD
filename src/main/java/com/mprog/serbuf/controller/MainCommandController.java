@@ -41,6 +41,14 @@ public class MainCommandController {
         return allData;
     }
 
+    @GetMapping("/get/all/count")
+    public ResponseAllData getAllCount() {
+        long start = System.currentTimeMillis();
+        ResponseAllData allData = mainCommandService.getAllDataCount();
+        long end = System.currentTimeMillis();
+        return allData;
+    }
+
     @GetMapping("/get/count")
     public Long count() {
         long start = System.currentTimeMillis();
