@@ -10,4 +10,5 @@ import java.util.List;
 public class ResponseAllData {
 
     private List<ShardAllData> shardAllData;
+    private Long count;
 }

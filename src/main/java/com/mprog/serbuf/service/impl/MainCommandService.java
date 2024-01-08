@@ -49,6 +49,7 @@ public class MainCommandService implements MainCommand {
 
     public ResponseAllData getAllData() {
         List<MadShard> shards = coordinateService.getShards();
+        int count = 0;
         List<ShardAllData> shardAllDataList = new ArrayList<>();
         for (MadShard shard : shards) {
             List<MadReplica> replicas = shard.getReplicas();
@@ -57,10 +58,23 @@ public class MainCommandService implements MainCommand {
                 String urlTemplate = UriComponentsBuilder.fromHttpUrl(replica.buildGetAllUrl())
                         .encode()
                         .toUriString();
-                ReplicaAllData replicaAllData = ReplicaAllData.builder()
-                        .data(sendGetAllDataRequest(urlTemplate).getAllData())
-                        .build();
-                replicaAllDataList.add(replicaAllData);
+                Map<String, Integer> collectionsSize = new HashMap<>();
+                AllDataResponse allDataResponse = sendGetAllDataRequest(urlTemplate);
+                if (allDataResponse.getResult()) {
+                    Map<String, Map<String, String>> collectionData = allDataResponse.getAllData();
+                    for (Map.Entry<String, Map<String, String>> stringMapEntry : collectionData.entrySet()) {
+                        int size = stringMapEntry.getValue().size();
+                        count += size;
+                        collectionsSize.put(stringMapEntry.getKey(), size);
+                    }
+                    ReplicaAllData replicaAllData = ReplicaAllData.builder()
+                            .data(collectionData)
+                            .collectionsSize(collectionsSize)
+                            .host(replica.getHost())
+                            .port(replica.getPort())
+                            .build();
+                    replicaAllDataList.add(replicaAllData);
+                }
             }
             ShardAllData shardAllData = ShardAllData.builder()
                     .replicaAllDataList(replicaAllDataList)
@@ -69,6 +83,7 @@ public class MainCommandService implements MainCommand {
 
         }
         return ResponseAllData.builder()
+                .count((long) count)
                 .shardAllData(shardAllDataList)
                 .build();
     }
@@ -127,10 +142,14 @@ public class MainCommandService implements MainCommand {
                     RestUtils.getHeaders(),
                     AllDataResponse.class
             );
-            return response.getBody();
+            AllDataResponse result = response.getBody();
+            result.setResult(true);
+            return result;
         } catch (Exception e) {
             log.error("Something happened while getting all data ", e);
-            throw new RuntimeException("sdada");
+            return AllDataResponse.builder()
+                    .result(false)
+                    .build();
         }
     }
 

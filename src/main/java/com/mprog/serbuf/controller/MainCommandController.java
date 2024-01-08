@@ -41,12 +41,20 @@ public class MainCommandController {
         return allData;
     }
 
+    @GetMapping("/get/count")
+    public Long count() {
+        long start = System.currentTimeMillis();
+        ResponseAllData allData = mainCommandService.getAllData();
+        long end = System.currentTimeMillis();
+        return allData.getCount();
+    }
+
     @GetMapping("/get/all/internal")
     public AllDataResponse getAllInternal() {
         long start = System.currentTimeMillis();
         Map<String, Map<String, String>> result = mainCommandService.getAllDataInternal();
         long end = System.currentTimeMillis();
-        return new AllDataResponse(result);
+        return new AllDataResponse(result, true);
     }
 
     @PostMapping("/clear")
@@ -90,7 +98,7 @@ public class MainCommandController {
 
     @PostMapping("/set/internal")
     public ControllerResponse setInternal(@RequestParam String collection, @RequestParam String key, @RequestParam String value) {
-        log.info("set internal method");
+//        log.info("set internal method");
         long start = System.currentTimeMillis();
         List<ResponseDto> responseDtoList = mainCommandService.set(collection, key, value, true);
         long end = System.currentTimeMillis();

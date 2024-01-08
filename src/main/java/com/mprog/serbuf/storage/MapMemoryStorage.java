@@ -22,7 +22,7 @@ public class MapMemoryStorage implements Storage{
 
     private List<Character> letters;
     private List<Integer> digits;
-    private Map<String, Map<String, String>> db = new HashMap<>();
+    private Map<String, Map<String, String>> db = new ConcurrentHashMap<>();
 
     @Override
     public ConcurrentHashMap<String, CacheVal> getStorageByKey(String key) {
@@ -45,6 +45,12 @@ public class MapMemoryStorage implements Storage{
         } else {
             log.warn("No such collection");
             throw new RuntimeException("No such collection");
+        }
+    }
+
+    public void clear() {
+        for (Map<String, String> value : db.values()) {
+//            value
         }
     }
 
@@ -97,7 +103,7 @@ public class MapMemoryStorage implements Storage{
         if (db.containsKey(collectionName)) {
             throw new RuntimeException(collectionName + " collection already exists!");
         } else {
-            db.put(collectionName, new HashMap<>());
+            db.put(collectionName, new ConcurrentHashMap<>());
         }
     }
 

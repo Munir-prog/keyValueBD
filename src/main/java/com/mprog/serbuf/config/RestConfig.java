@@ -12,4 +12,3 @@ public class RestConfig {
         return new RestTemplate();
     }
 }
-wor

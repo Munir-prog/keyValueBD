@@ -20,4 +20,5 @@ public interface Storage {
     void save(ConcurrentHashMap<String, CacheVal> map, String key);
     Map<String, Map<String, String>> getAllData();
     void createCollection(String collection);
+
 }
